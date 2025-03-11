@@ -1,0 +1,22 @@
+{
+    "name": "VoxelBusters.PermissionsKit.AndroidModule",
+    "rootNamespace": "",
+    "references": [
+        "VoxelBusters.CoreLibrary",
+        "VoxelBusters.CoreLibrary.NativePlugins",
+        "VoxelBusters.CoreLibrary.NativePlugins.AndroidModule",
+        "VoxelBusters.PermissionsKit"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

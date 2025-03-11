@@ -1,0 +1,15 @@
+{
+    "name": "com.voxelbusters.permissionskit",
+    "displayName": "Permissions Kit",
+    "version": "1.0.0",
+    "unity": "2021.3",
+    "description": "",
+    "dependencies": {},
+    "samples": [],
+    "keywords": [],
+    "author": {
+        "name": "Voxel Busters",
+        "email": "support@voxelbusters.com",
+        "url": "https://www.voxelbusters.com"
+    }
+}

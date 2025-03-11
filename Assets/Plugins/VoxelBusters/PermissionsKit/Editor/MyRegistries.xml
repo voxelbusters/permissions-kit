@@ -1,0 +1,12 @@
+﻿<registries>
+  <registry name="npmjs"
+            url="https://registry.npmjs.org/"
+            termsOfService="https://registry.npmjs.org/terms"
+            privacyPolicy="https://registry.npmjs.org/privacy">
+    <scopes>
+      <scope>com.voxelbusters.corelibrary</scope>
+      <scope>com.voxelbusters.corelibrary.nativeplugins</scope>
+      <scope>com.voxelbusters.parser</scope>
+    </scopes>
+  </registry>
+</registries>

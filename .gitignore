@@ -58,7 +58,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.aab
-*.unitypackage
 *.unitypackage.meta
 *.app
 
@@ -76,3 +75,4 @@ Assets/Plugins/Android
 Assets/Resources
 Packages/com.unity.asset-store-tools
 Resources.meta
+Packages

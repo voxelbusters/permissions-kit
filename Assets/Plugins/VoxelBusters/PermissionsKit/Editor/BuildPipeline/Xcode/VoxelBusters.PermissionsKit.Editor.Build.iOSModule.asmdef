@@ -1,0 +1,24 @@
+{
+    "name": "VoxelBusters.PermissionsKit.Editor.Build.iOSModule",
+    "rootNamespace": "",
+    "references": [
+        "VoxelBusters.CoreLibrary",
+        "VoxelBusters.CoreLibrary.Editor",
+        "VoxelBusters.CoreLibrary.NativePlugins",
+        "VoxelBusters.CoreLibrary.Editor.NativePlugins",
+        "VoxelBusters.PermissionsKit.iOSModule",
+        "VoxelBusters.PermissionsKit.Editor",
+        "VoxelBusters.PermissionsKit"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
