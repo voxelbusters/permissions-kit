@@ -55,7 +55,7 @@ PermissionsKit.Request(request, (PermissionRequestResult result) =>
 // Check the status of a specific permission
 PermissionStatus status = PermissionsKit.GetStatus(Permission.RECORD_AUDIO);
 ```
-# 📈 Advanced Permission Management for Better DX (Developer Experience)
+### 📈 Advanced Permission Management for Better DX (Developer Experience)
 
 **Smart Handling**: Prevents unnecessary prompts if permissions are already granted.  
 **Development Mode Alerts**: Warns developers about missing configurations during development.  
