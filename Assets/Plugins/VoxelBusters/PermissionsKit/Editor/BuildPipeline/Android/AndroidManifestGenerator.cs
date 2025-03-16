@@ -132,7 +132,7 @@ namespace VoxelBusters.PermissionsKit.Editor.Build.Android
             {
                 permission = new AndroidPermission();
                 permission.AddAttribute("android:name", "android.permission.WRITE_EXTERNAL_STORAGE");
-                permission.AddAttribute("android:maxSdkVersion", "28");
+                permission.AddAttribute("android:maxSdkVersion", "32");
                 manifest.Add(permission);
                 needsReadStorage = true;
             }
