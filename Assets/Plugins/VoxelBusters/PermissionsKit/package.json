@@ -1,7 +1,7 @@
 {
     "name": "com.voxelbusters.permissionskit",
     "displayName": "Permissions Kit",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "unity": "2021.3",
     "description": "",
     "dependencies": {},

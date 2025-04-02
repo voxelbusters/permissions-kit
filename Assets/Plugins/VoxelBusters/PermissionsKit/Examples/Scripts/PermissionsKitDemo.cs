@@ -59,10 +59,10 @@ namespace VoxelBusters.PermissionsKit.Demo
                     builder.AddPermission(m_currentSelectedPermission);
                     
                     //You can add multiple permissions per permission request.
-                    /*builder.AddPermission(Permission.ADD_MEDIA_LIBRARY_CONTENT);
+                    /*builder.AddPermission(Permission.RECORD_AUDIO);
                     builder.AddPermission(Permission.WRITE_MEDIA_LIBRARY_CONTENT);*/
                     
-                    builder.SetPurposeDescription("Need camera and audio recording for video recording!");
+                    builder.SetPurposeDescription($"Need {m_currentSelectedPermission} permission");
                     builder.ShowApplicationSettingsIfDeniedOrRestricted(true);
                     PermissionRequest request = builder.Build();
 
