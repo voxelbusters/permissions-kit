@@ -17,6 +17,7 @@
 #endif
 #if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
 #import <CoreLocation/CoreLocation.h>
+#import "NPLocationManagerListener.h"
 #endif
 #if PERMISSIONS_KIT_USES_NOTIFICATIONS_FRAMEWORK
 #import <UserNotifications/UserNotifications.h>
@@ -32,9 +33,19 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
 
 @interface NPPermissionsKit ()
 
+#if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
+@property (nonatomic, strong) CLLocationManager *locationManager;
+@property (nonatomic, strong) NPLocationManagerListener *locationStatusListener;
+#endif
+
 @end
 
 @implementation NPPermissionsKit
+
+#if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
+@synthesize locationManager;
+@synthesize locationStatusListener;
+#endif
 
 -(NPPermissionsKit*) init
 {
@@ -150,9 +161,24 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
                 
             } else
 #endif
-            {
-                completionHandler(permission, PermissionsKitStatusAuthorized, nil);
-            }
+                if ([permission equals:[NPPermission ACCESS_INTERNET]] ||
+                    [permission equals:[NPPermission ACCESS_WIFI_STATE]] ||
+                    [permission equals:[NPPermission VIBRATE]] ||
+                    [permission equals:[NPPermission IN_APP_PURCHASES]])
+                {
+                    NSLog(@"No need of any request for this permission(%@)", permission);
+                    completionHandler(permission, PermissionsKitStatusAuthorized, nil);
+                }
+                else if ([permission equals:[NPPermission ACCESS_NETWORK_STATE]])
+                {
+                    NSLog(@"TODO: Currently passing unknown for permission(%@)", permission);
+                    completionHandler(permission, PermissionsKitStatusUnknown, nil);
+                }
+                else
+                {
+                    NSLog(@"Permission(%@) is not handled. This can be due to not enabling the permission in settings or report to this plugin developer with the permission name.", permission);
+                    completionHandler(permission, PermissionsKitStatusUnknown, nil);
+                }
         }
     }
 
@@ -161,23 +187,39 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
 - (void)requestLocationPermission:(BOOL)requestAlways
                        completion:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
     
-    CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+    self.locationManager = [[CLLocationManager alloc] init];
     CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
     PermissionsKitStatus status = PermissionsKitStatusUnknown;
-
-    if (authStatus == kCLAuthorizationStatusNotDetermined) {
-        // First-time request
+    
+    self.locationStatusListener = [[NPLocationManagerListener alloc] init:^(CLAuthorizationStatus authStatus) {
+        PermissionsKitStatus newStatus = [self convertStatus:authStatus withRequestAlways:requestAlways];
+        completion(newStatus, nil);
+        self.locationManager = nil;
+        self.locationStatusListener = nil;
+    } withInitialStatus:authStatus];
+    
+    status = [self convertStatus:authStatus withRequestAlways:requestAlways];
+    
+    if(status == PermissionsKitStatusUnknown || (status == PermissionsKitStatusLimited && requestAlways)) {
+        locationManager.delegate = self.locationStatusListener;
         if (requestAlways) {
             [locationManager requestAlwaysAuthorization];
         } else {
             [locationManager requestWhenInUseAuthorization];
         }
+    } else {
+        self.locationManager = nil;
+        completion(status, nil);
+    }
+}
+
+-(PermissionsKitStatus) convertStatus:(CLAuthorizationStatus) authStatus withRequestAlways:(BOOL) requestAlways
+{
+    PermissionsKitStatus status;
+    if (authStatus == kCLAuthorizationStatusNotDetermined) {
         status = PermissionsKitStatusUnknown;
     } else if (authStatus == kCLAuthorizationStatusAuthorizedWhenInUse) {
         status = requestAlways ? PermissionsKitStatusLimited : PermissionsKitStatusAuthorized;
-        if (requestAlways) {
-            [locationManager requestAlwaysAuthorization];
-        }
     } else if (authStatus == kCLAuthorizationStatusAuthorizedAlways) {
         status = PermissionsKitStatusAuthorized;
     } else if (authStatus == kCLAuthorizationStatusDenied) {
@@ -185,12 +227,14 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
     } else {
         status = PermissionsKitStatusRestricted;
     }
-
-    completion(status, nil);
+    
+    return status;
 }
+
+
 #endif
 
-#if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
+#if PERMISSIONS_KIT_USES_NOTIFICATIONS_FRAMEWORK
     - (void)requestPushNotificationPermission:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge)
@@ -201,19 +245,24 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
 #endif
 
 #if PERMISSIONS_KIT_USES_AVFOUNDATION_FRAMEWORK
-    - (void)requestCameraPermission:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
-        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-        
-        PermissionsKitStatus status = PermissionsKitStatusUnknown;
-        if (authStatus == AVAuthorizationStatusAuthorized) {
-            status = PermissionsKitStatusAuthorized;
-        } else if (authStatus == AVAuthorizationStatusDenied) {
-            status = PermissionsKitStatusDenied;
-        } else if (authStatus == AVAuthorizationStatusRestricted) {
-            status = PermissionsKitStatusRestricted;
-        }
-        
-        completion(status, nil);
+- (void)requestCameraPermission:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
+    
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            AVAuthorizationStatus   authStatus  = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+            
+            PermissionsKitStatus status = PermissionsKitStatusUnknown;
+            if (authStatus == AVAuthorizationStatusAuthorized) {
+                status = PermissionsKitStatusAuthorized;
+            } else if (authStatus == AVAuthorizationStatusDenied) {
+                status = PermissionsKitStatusDenied;
+            } else if (authStatus == AVAuthorizationStatusRestricted) {
+                status = PermissionsKitStatusRestricted;
+            }
+            
+            // send callback
+            completion(status, nil);
+        }];
+ 
     }
 
     - (void)requestMicrophonePermission:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
@@ -224,8 +273,9 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
 #endif
 
 #if PERMISSIONS_KIT_USES_PHOTOS_FRAMEWORK
-    - (void) requestPhotoLibraryPermission:(PHAccessLevel) accessLevel withCallback:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
-        [PHPhotoLibrary requestAuthorizationForAccessLevel:accessLevel handler:^(PHAuthorizationStatus authStatus) {
+- (void) requestPhotoLibraryPermission:(PHAccessLevel) accessLevel withCallback:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion  API_AVAILABLE(ios(14)){
+        
+        void (^handler)(PHAuthorizationStatus status) = ^(PHAuthorizationStatus authStatus) {
             PermissionsKitStatus status = PermissionsKitStatusUnknown;
             if (authStatus == PHAuthorizationStatusAuthorized) {
                 status = PermissionsKitStatusAuthorized;
@@ -233,14 +283,22 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
                 status = PermissionsKitStatusDenied;
             } else if (authStatus == PHAuthorizationStatusRestricted) {
                 status = PermissionsKitStatusRestricted;
-            } else if (@available(iOS 14, *)) {
-                if (authStatus == PHAuthorizationStatusLimited) {
+            } else if (authStatus == PHAuthorizationStatusLimited) {
                     status = PermissionsKitStatusLimited;
-                }
+            } else {
+                NSLog(@"PHAuthorizationStatus not handled %ld", authStatus);
             }
             
             completion(status, nil);
-        }];
+        };
+        
+    
+        if (@available(iOS 14, *)) {
+            [PHPhotoLibrary requestAuthorizationForAccessLevel:accessLevel handler:handler];
+        } else {
+            // Fallback on earlier versions
+            [PHPhotoLibrary requestAuthorization:handler];
+        }
     }
 
     - (void) requestWriteToPhotoLibraryPermission: (void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {

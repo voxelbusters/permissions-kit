@@ -47,7 +47,7 @@ namespace VoxelBusters.PermissionsKit
             {
                 return new UnityPackageDefinition(name: "com.voxelbusters.permissionskit",
                                                   displayName: "Permissions Kit",
-                                                  version: "1.0.2",
+                                                  version: "1.1.0",
                                                   defaultInstallPath: $"Assets/Plugins/VoxelBusters/PermissionsKit",
                                                   dependencies: CoreLibrarySettings.Package);
             });
