@@ -13,7 +13,9 @@ typedef void (^LocationAuthorizationStatusCallback) (CLAuthorizationStatus authS
 
 @interface NPLocationManagerListener : NSObject<CLLocationManagerDelegate>
 
--(NPLocationManagerListener*) init:(LocationAuthorizationStatusCallback) completion  withInitialStatus:(CLAuthorizationStatus) initialStatus;
+-(NPLocationManagerListener*) initwithInitialStatus:(CLAuthorizationStatus) initialStatus;
+
+-(void) addListener:(LocationAuthorizationStatusCallback) completion;
 
 @end
 #endif

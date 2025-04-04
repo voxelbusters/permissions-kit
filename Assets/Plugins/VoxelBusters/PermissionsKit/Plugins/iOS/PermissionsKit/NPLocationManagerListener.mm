@@ -12,30 +12,36 @@
 
 @interface NPLocationManagerListener ()
 
-@property (nonatomic, copy) LocationAuthorizationStatusCallback callback;
+@property (nonatomic, strong) NSMutableArray<LocationAuthorizationStatusCallback> *callbackList;
 @property (nonatomic) CLAuthorizationStatus initialStatus;
 
 @end
  
 @implementation NPLocationManagerListener
 
-@synthesize callback;
+@synthesize callbackList;
 @synthesize initialStatus;
 
--(NPLocationManagerListener*) init:(LocationAuthorizationStatusCallback) callback withInitialStatus:(CLAuthorizationStatus) initialStatus
+-(NPLocationManagerListener*) initwithInitialStatus:(CLAuthorizationStatus) initialStatus
 {
-    self.callback = callback;
+    self.callbackList = [[NSMutableArray alloc] init];
     self.initialStatus = initialStatus;
     return self;
+}
+
+-(void) addListener:(LocationAuthorizationStatusCallback) completion
+{
+    [callbackList addObject:completion];
 }
 
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager
 {
 
     CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
-    
     if(initialStatus != authStatus) {
-        self.callback(authStatus);
+        for (LocationAuthorizationStatusCallback eachCallback in callbackList) {
+            eachCallback(authStatus);
+        }
     }
 }
 

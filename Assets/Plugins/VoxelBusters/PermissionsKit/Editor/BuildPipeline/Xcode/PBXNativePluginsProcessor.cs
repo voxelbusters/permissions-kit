@@ -167,7 +167,7 @@ namespace VoxelBusters.PermissionsKit.Editor.Build.Xcode
             AddPermission("NSBluetoothAlwaysUsageDescription", Permission.ACCESS_BLUETOOTH);
             AddPermission("NSBluetoothPeripheralUsageDescription", Permission.ACCESS_BLUETOOTH);
             AddPermission("NSLocationWhenInUseUsageDescription", Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION);
-            AddPermission("NSLocationAlwaysUsageDescription", Permission.ACCESS_LOCATION_IN_BACKGROUND);
+            AddPermission("NSLocationAlwaysAndWhenInUseUsageDescription", Permission.ACCESS_LOCATION_IN_BACKGROUND);
             AddPermission("NSLocationUsageDescription", Permission.ACCESS_COARSE_LOCATION);
             AddPermission("NSLocalNetworkUsageDescription", Permission.ACCESS_LOCAL_NETWORK);
             AddPermission("NSUserTrackingUsageDescription", Permission.PUSH_NOTIFICATIONS);

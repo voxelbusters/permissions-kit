@@ -186,17 +186,23 @@ typedef void (^PermissionAlertCallback)(BOOL didOpenSettings);
 #if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
 - (void)requestLocationPermission:(BOOL)requestAlways
                        completion:(void (^)(PermissionsKitStatus status, NSError * _Nullable error))completion {
-    
-    self.locationManager = [[CLLocationManager alloc] init];
+
     CLAuthorizationStatus authStatus = [CLLocationManager authorizationStatus];
     PermissionsKitStatus status = PermissionsKitStatusUnknown;
     
-    self.locationStatusListener = [[NPLocationManagerListener alloc] init:^(CLAuthorizationStatus authStatus) {
-        PermissionsKitStatus newStatus = [self convertStatus:authStatus withRequestAlways:requestAlways];
+    if(self.locationManager == nil) {
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationStatusListener = [[NPLocationManagerListener alloc] initwithInitialStatus:authStatus];
+    }
+    
+    __weak NPPermissionsKit *weakSelf = self;
+    
+    [self.locationStatusListener addListener:^(CLAuthorizationStatus authStatus) {
+        PermissionsKitStatus newStatus = [weakSelf convertStatus:authStatus withRequestAlways:requestAlways];
         completion(newStatus, nil);
-        self.locationManager = nil;
-        self.locationStatusListener = nil;
-    } withInitialStatus:authStatus];
+        weakSelf.locationManager = nil;
+        weakSelf.locationStatusListener = nil;
+    }];
     
     status = [self convertStatus:authStatus withRequestAlways:requestAlways];
     
