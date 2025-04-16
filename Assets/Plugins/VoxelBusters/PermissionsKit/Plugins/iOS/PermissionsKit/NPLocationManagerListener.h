@@ -7,13 +7,13 @@
 
 #import "NPConfig.h"
 
-#if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
+#if PERMISSIONS_KIT_USES_LOCATION
 #import <CoreLocation/CoreLocation.h>
 typedef void (^LocationAuthorizationStatusCallback) (CLAuthorizationStatus authStatus);
 
 @interface NPLocationManagerListener : NSObject<CLLocationManagerDelegate>
 
--(NPLocationManagerListener*) initwithInitialStatus:(CLAuthorizationStatus) initialStatus;
+-(NPLocationManagerListener*) init;
 
 -(void) addListener:(LocationAuthorizationStatusCallback) completion;
 

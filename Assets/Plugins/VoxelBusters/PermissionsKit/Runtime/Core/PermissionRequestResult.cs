@@ -23,9 +23,12 @@ namespace VoxelBusters.PermissionsKit.Core
         public bool Authorized(bool allowLimitedAccess = true)
         {
             foreach (var status in StatusMap.Values)
-            {
-                if (status != PermissionStatus.Authorized  && (allowLimitedAccess && status != PermissionStatus.Limited))
-                    return false;
+            {                
+                if (allowLimitedAccess && status == PermissionStatus.Limited)
+                    continue;
+
+                if (status != PermissionStatus.Authorized)
+                        return false;
             }
 
             return true;

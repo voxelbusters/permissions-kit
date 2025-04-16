@@ -7,7 +7,7 @@
 
 #import "NPLocationManagerListener.h"
 
-#if PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK
+#if PERMISSIONS_KIT_USES_LOCATION
 #import <CoreLocation/CoreLocation.h>
 
 @interface NPLocationManagerListener ()
@@ -22,10 +22,10 @@
 @synthesize callbackList;
 @synthesize initialStatus;
 
--(NPLocationManagerListener*) initwithInitialStatus:(CLAuthorizationStatus) initialStatus
+-(NPLocationManagerListener*) init
 {
     self.callbackList = [[NSMutableArray alloc] init];
-    self.initialStatus = initialStatus;
+    self.initialStatus = [CLLocationManager authorizationStatus];
     return self;
 }
 

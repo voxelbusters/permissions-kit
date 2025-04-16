@@ -91,31 +91,37 @@ namespace VoxelBusters.PermissionsKit.Editor.Build.Xcode
 
             if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION, Permission.ACCESS_LOCATION_IN_BACKGROUND))
             {
-                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_LOCATION_FRAMEWORK", value: "1");
+                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_LOCATION", value: "1");
                 AddFramework("CoreLocation");
             }
             
             if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.PUSH_NOTIFICATIONS))
             {
-                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_NOTIFICATIONS_FRAMEWORK", value: "1");    
+                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_NOTIFICATIONS", value: "1");    
                 AddFramework("UserNotifications");
             }
             
-            if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.USE_CAMERA, Permission.RECORD_AUDIO))
+            if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.USE_CAMERA))
             {
-                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_AVFOUNDATION_FRAMEWORK", value: "1");    
+                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_CAMERA", value: "1");    
                 AddFramework("AVFoundation");
             }
             
-            if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.READ_MEDIA_LIBRARY_IMAGES, Permission.READ_MEDIA_LIBRARY_VIDEOS, Permission.RECORD_AUDIO))
+            if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.RECORD_AUDIO))
             {
-                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_PHOTOS_FRAMEWORK", value: "1");    
+                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_RECORD_AUDIO", value: "1");    
+                AddFramework("AVFoundation");
+            }
+            
+            if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.READ_MEDIA_LIBRARY_IMAGES, Permission.READ_MEDIA_LIBRARY_VIDEOS, Permission.READ_MEDIA_LIBRARY_AUDIO))
+            {
+                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_MEDIA", value: "1");
                 AddFramework("Photos");
             }
             
             if (Settings.PermissionsConfiguration.IsAnyPermissionEnabled(Permission.ACCESS_BLUETOOTH))
             {
-                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_BLUETOOTH_FRAMEWORK", value: "1");    
+                exporter.AddMacro(name: "PERMISSIONS_KIT_USES_BLUETOOTH", value: "1");    
                 AddFramework("CoreBluetooth");
             }
             
