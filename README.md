@@ -31,6 +31,7 @@ Permissions Kit offers a developer-friendly API for requesting and checking perm
 
 ```csharp
 using VoxelBusters.PermissionsKit;
+using VoxelBusters.CoreLibrary;
 
 // Create a PermissionRequest instance
 PermissionRequest request = new PermissionRequest.Builder()
@@ -40,7 +41,7 @@ PermissionRequest request = new PermissionRequest.Builder()
                                 .Build();
 
 // Request permissions
-PermissionsKit.Request(request, (PermissionRequestResult result) =>
+PermissionsKit.Request(request, (PermissionRequestResult result, Error error) =>
 {
     if (result.Authorized())
     {
